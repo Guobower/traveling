@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <record id="travel_travel_fom" model="ir.ui.view">
+            <field name="name">Travel main form</field>
+            <field name="model">travel.travel</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm_travel" type="object" class="oe_highlight"
+                                string="تأكيد الرحلة" attrs="{'invisible': [('state','!=', 'draft')]}"/>
+                       <button name="cancel_travel" type="object" class="oe_highlight"
+                                string="إلغاء الرحلة" attrs="{'invisible': [('state', 'in', ['canceled', 'expired'])]}"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <field name="company_id" invisible="True"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group string="الوجهة والثمن">
+                            <group colspan="2">
+                                <field name="offer_id"/>
+                            </group>
+                            <group >
+                                <field name="dep_travel_place_id"/>
+                                <field name="des_travel_place_id" />
+                                <field name="travel_go_date" />
+                                <field name="travel_return_date" />
+                            </group>
+                            <group>
+                                <field name="price"/>
+                                <field name="customers_count" />
+                                <field name="travel_amount" />
+                                <field name="currency_id" />
+                            </group>
+                        </group>
+                        <group string="معلومات السفر" col="4">
+                            <field name="travel_type"/>
+                            <field name="travel_way"/>
+                            <field name="travel_company_id" nolable="1"/>
+                        </group>
+                        <notebook>
+                            <page string="المسافرين">
+
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="travel_trave_tree" model="ir.ui.view">
+            <field name="model">travel.travel.main.tree</field>
+            <field name="model">travel.travel</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="customers_count"/>
+                    <field name="travel_amount" />
+                    <field name="dep_travel_place_id"/>
+                    <field name="des_travel_place_id" />
+                    <field name="travel_go_date" />
+                    <field name="travel_return_date" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="travel_travel_search" model="ir.ui.view">
+            <field name="name">search view for travel</field>
+            <field name="model">travel.travel</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="offer_id"/>
+                    <field name="des_travel_place_id"/>
+                     <group expand="0" colspan="4">
+                        <filter  string="الوجهة" domain="[]" context="{'group_by':'des_travel_place_id'}"/>
+                        <filter  string="نوع الرحلة" domain="[]" context="{'group_by':'travel_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="trave_travel_action" model="ir.actions.act_window">
+            <field name="name">الرحلات</field>
+            <field name="res_model">travel.travel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="travel_trave_menu" name="الرحلات" parent="root_agency_management" action="trave_travel_action"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <record id="fly" model="travel.travel.way">
+            <field name="name">الطائرة</field>
+        </record>
+        <record id="bus" model="travel.travel.way">
+            <field name="name">الحافلة</field>
+        </record>
+        <record id="minibus" model="travel.travel.way">
+            <field name="name">حافلة صغيرة</field>
+        </record>
+        <record id="train" model="travel.travel.way">
+            <field name="name">القطار</field>
+        </record>
+
+
+    </data>
+</openerp>

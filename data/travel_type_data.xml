@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <record id="traveling" model="travel.travel.type">
+            <field name="name">سفر</field>
+        </record>
+        <record id="Hajj" model="travel.travel.type">
+            <field name="name">حج</field>
+        </record>
+        <record id="Umrah" model="travel.travel.type">
+            <field name="name">عمرة</field>
+        </record>
+
+    </data>
+</openerp>

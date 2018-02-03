@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <record id="air_algerie" model="travel.travel.company">
+            <field name="name">Air Algerie</field>
+        </record>
+        <record id="air_france" model="travel.travel.company">
+            <field name="name">Air France</field>
+        </record>
+        <record id="emirates" model="travel.travel.company">
+            <field name="name">Emirates</field>
+        </record>
+        <record id="saudi_airlines" model="travel.travel.company">
+            <field name="name">Saudi Airlines</field>
+        </record>
+        <record id="turkish_airlines" model="travel.travel.company">
+            <field name="name">Turkish Airlines</field>
+        </record>
+        <record id="tassili_airlines" model="travel.travel.company">
+            <field name="name">Tassili Airlines</field>
+        </record>
+        <record id="tunisair" model="travel.travel.company">
+            <field name="name">Tunisair</field>
+        </record>
+        <record id="vueling_airlines" model="travel.travel.company">
+            <field name="name">Vueling Airlines</field>
+        </record>
+        <record id="iberia" model="travel.travel.company">
+            <field name="name">Iberia</field>
+        </record>
+        <record id="alitalia" model="travel.travel.company">
+            <field name="name">Alitalia</field>
+        </record>
+
+
+    </data>
+</openerp>

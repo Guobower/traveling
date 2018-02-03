@@ -1,0 +1,125 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* traveling
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-31 08:56+0000\n"
+"PO-Revision-Date: 2018-01-31 08:56+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "(edit)"
+msgstr "(تعديل)"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Address"
+msgstr "العنوان"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "City"
+msgstr "المدينة"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Company"
+msgstr "المؤسسة"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Country"
+msgstr "دولة"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Create company"
+msgstr "Create company"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Employee"
+msgstr "موظف"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Name"
+msgstr "الاسم"
+
+#. module: traveling
+#: model:ir.model,name:traveling.model_res_partner
+msgid "Partner"
+msgstr "شريك"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Partners"
+msgstr "الشركاء"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "State"
+msgstr "المحافظة"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Street 2..."
+msgstr "الشارع 2"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Street..."
+msgstr "الشارع..."
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "Tags..."
+msgstr "الوسوم..."
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "ZIP"
+msgstr "الرمز البريدي"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "e.g. www.odoo.com"
+msgstr "مثلا www.odoo.com"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "test@gmail.com"
+msgstr "test@gmail.com"
+
+#. module: traveling
+#: model:ir.actions.act_window,name:traveling.res_partner_list
+#: model:ir.ui.menu,name:traveling.child_costumers
+msgid "العملاء"
+msgstr "العملاء"
+
+#. module: traveling
+#: model:ir.ui.menu,name:traveling.main_root_agency_management
+#: model:ir.ui.menu,name:traveling.root_agency_management
+msgid "تسيير الرحلات"
+msgstr "تسيير الرحلات"
+
+#. module: traveling
+#: model:ir.model.fields,field_description:traveling.field_res_partner_passport_number
+#: model:ir.model.fields,field_description:traveling.field_res_users_passport_number
+msgid "رقم جواز السفر"
+msgstr "رقم جواز السفر"
+
+#. module: traveling
+#: model:ir.ui.view,arch_db:traveling.view_partner_form
+msgid "عميل"
+msgstr "عميل"
+
