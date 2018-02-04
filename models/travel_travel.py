@@ -6,6 +6,8 @@ from odoo import models, fields, api, _, exceptions
 class Travel(models.Model):
     """ contains travel information."""
     _name = 'travel.travel'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = 'Travel information'
 
     state = fields.Selection([('draft', u'مسودة'),
                               ('confirmed', u'رحلة مؤكدة'),
@@ -43,9 +45,20 @@ class Travel(models.Model):
                                           )
     price = fields.Float(u'مبلغ المسافر الواحد', required=True,readonly=True, states={'draft': [('readonly', False)]})
 
-    # TODO: make it compute field along with client payments
-    travel_amount = fields.Float(u'المجموع', readonly=True)
-    customers_count = fields.Integer(u'عدد العملاء', readonly=True)
+    total_amount = fields.Float(u'المجموع',
+                                compute='get_total',
+                                readonly=True,
+                                store=True)
+
+    paid_amount = fields.Float(string=u'المبلغ المدفوع',
+                               compute='get_total_paid',
+                               readonly=True,
+                               store=True)
+
+    customers_count = fields.Integer(string=u'عدد المسافرين',
+                                     readonly=True,
+                                     compute='count_customers',
+                                     store=True)
 
     currency_id = fields.Many2one('res.currency', string='Currency', required=True,
                                   default=lambda self: self.env.user.company_id.currency_id,
@@ -66,6 +79,11 @@ class Travel(models.Model):
     travel_go_date = fields.Date(u'ساعة الإنطلاق',readonly=True, states={'confirmed': [('readonly', False)]})
 
     travel_return_date = fields.Date(u'ساعة الرجوع', readonly=True, states={'confirmed': [('readonly', False)]})
+
+    passenger_ids = fields.One2many(comodel_name='travel.passenger',
+                                    inverse_name='travel_id',
+                                    string='Passenger List',
+                                    )
 
     @api.onchange('offer_id')
     def onchange_offer_id(self):
@@ -108,4 +126,35 @@ class Travel(models.Model):
 
         })
 
+    @api.depends('passenger_ids', 'price')
+    def count_customers(self):
+        """ count number of costumers."""
+        for rec in self:
+            rec.update({
+                'customers_count': rec.passenger_ids and len(rec.passenger_ids) or 0,
+            })
 
+    @api.depends('passenger_ids', 'passenger_ids.amount')
+    def get_total(self):
+        """ compute amount paid of total passengers."""
+        for rec in self:
+            if rec.passenger_ids:
+                rec.total_amount = sum(passenger.amount for passenger in rec.passenger_ids )
+            else:
+                rec.total_amount = 0.0
+
+    @api.depends('passenger_ids', 'passenger_ids.amount_paid')
+    def get_total_paid(self):
+        """ compute amount paid of total passengers."""
+        for rec in self:
+            if rec.passenger_ids:
+                rec.paid_amount = sum(passenger.amount_paid for passenger in rec.passenger_ids )
+            else:
+                rec.paid_amount = 0.0
+
+    @api.constrains('passenger_ids')
+    def prevent_duplication(self):
+        """ you cannot affect the some client two time"""
+        for rec in self:
+            if rec.passenger_ids and len(rec.passenger_ids) > len(rec.passenger_ids.mapped('passenger_id')):
+                raise exceptions.ValidationError(u'!!لا يمكنك إعادة إدراج نفس الزبون مرتين')

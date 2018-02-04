@@ -5,4 +5,6 @@ from . import travel_way
 from . import travel_place
 from . import travel_type
 from . import travel_company
-from . import travel
+from . import travel_travel
+from . import travel_passenger
+

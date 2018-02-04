@@ -10,7 +10,7 @@
                     <header>
                         <button name="confirm_travel" type="object" class="oe_highlight"
                                 string="تأكيد الرحلة" attrs="{'invisible': [('state','!=', 'draft')]}"/>
-                       <button name="cancel_travel" type="object" class="oe_highlight"
+                        <button name="cancel_travel" type="object" class="oe_highlight"
                                 string="إلغاء الرحلة" attrs="{'invisible': [('state', 'in', ['canceled', 'expired'])]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -34,7 +34,8 @@
                             <group>
                                 <field name="price"/>
                                 <field name="customers_count" />
-                                <field name="travel_amount" />
+                                <field name="total_amount" />
+                                <field name="paid_amount"/>
                                 <field name="currency_id" />
                             </group>
                         </group>
@@ -45,10 +46,20 @@
                         </group>
                         <notebook>
                             <page string="المسافرين">
-
+                                <field name="passenger_ids" context="{'default_amount': price}">
+                                    <tree editable="bottom">
+                                        <field name="passenger_id"/>
+                                        <field name="amount"/>
+                                        <field name="amount_paid"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -61,7 +72,7 @@
                 <tree>
                     <field name="name"/>
                     <field name="customers_count"/>
-                    <field name="travel_amount" />
+                    <field name="total_amount" />
                     <field name="dep_travel_place_id"/>
                     <field name="des_travel_place_id" />
                     <field name="travel_go_date" />
@@ -79,7 +90,7 @@
                     <field name="name"/>
                     <field name="offer_id"/>
                     <field name="des_travel_place_id"/>
-                     <group expand="0" colspan="4">
+                    <group expand="0" colspan="4">
                         <filter  string="الوجهة" domain="[]" context="{'group_by':'des_travel_place_id'}"/>
                         <filter  string="نوع الرحلة" domain="[]" context="{'group_by':'travel_type'}"/>
                     </group>
