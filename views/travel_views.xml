@@ -48,7 +48,7 @@
                             <page string="المسافرين">
                                 <field name="passenger_ids" context="{'default_amount': price}">
                                     <tree editable="bottom">
-                                        <field name="passenger_id"/>
+                                        <field name="passenger_id" context="{'form_view_ref': 'traveling.view_partner_form'}"/>
                                         <field name="amount"/>
                                         <field name="amount_paid"/>
                                     </tree>

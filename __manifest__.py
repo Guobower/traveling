@@ -17,7 +17,7 @@
         'data/travel_way_data.xml',
         'data/companies_data.xml',
     ],
-    'depends': ['base', 'mail'],
+    'depends': ['base_setup', 'mail'],
     'install': True,
     'application': True,
 }
