@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-
-        <!-- Sequences for sale.order -->
-        <record id="seq_offer" model="ir.sequence">
-            <field name="name">Travel Offer</field>
-            <field name="code">travel.offer</field>
-            <field name="prefix">offer/%(year)s/</field>
-            <field name="padding">4</field>
-            <field name="company_id" eval="False"/>
-        </record>
         <!-- Sequences for sale.order -->
         <record id="seq_travel" model="ir.sequence">
             <field name="name">Travel Offer</field>
             <field name="code">travel.travel</field>
-            <field name="prefix">travel/%(year)s/</field>
+            <field name="prefix">TRV/%(year)s/</field>
             <field name="padding">4</field>
             <field name="company_id" eval="False"/>
         </record>

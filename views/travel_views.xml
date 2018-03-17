@@ -10,8 +10,10 @@
                     <header>
                         <button name="confirm_travel" type="object" class="oe_highlight"
                                 string="تأكيد الرحلة" attrs="{'invisible': [('state','!=', 'draft')]}"/>
+
                         <button name="cancel_travel" type="object" class="oe_highlight"
                                 string="إلغاء الرحلة" attrs="{'invisible': [('state', 'in', ['canceled', 'expired'])]}"/>
+
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -21,22 +23,22 @@
                                 <field name="name" readonly="1"/>
                             </h1>
                         </div>
+                        <group >
+                            <field name="partner_id"/>
+                        </group>
                         <group string="الوجهة والثمن">
-                            <group colspan="2">
-                                <field name="offer_id"/>
-                            </group>
                             <group >
-                                <field name="dep_travel_place_id"/>
+                                <field name="airport_id"/>
                                 <field name="des_travel_place_id" />
                                 <field name="travel_go_date" />
                                 <field name="travel_return_date" />
                             </group>
                             <group>
                                 <field name="price"/>
-                                <field name="customers_count" />
-                                <field name="total_amount" />
                                 <field name="paid_amount"/>
+                                <field name="amount_left"/>
                                 <field name="currency_id" />
+                                <field name="customers_count" />
                             </group>
                         </group>
                         <group string="معلومات السفر" col="4">
@@ -45,12 +47,24 @@
                             <field name="travel_company_id" nolable="1"/>
                         </group>
                         <notebook>
-                            <page string="المسافرين">
-                                <field name="passenger_ids" context="{'default_amount': price}">
-                                    <tree editable="bottom">
-                                        <field name="passenger_id" context="{'form_view_ref': 'traveling.view_partner_form'}"/>
+                            <page string="الدفعات">
+
+                                <field name="payment_ids" attrs="{'invisible': [('state','=', 'draft')]}">
+                                    <tree editable="bottom" delete="1">
                                         <field name="amount"/>
-                                        <field name="amount_paid"/>
+                                        <field name="currency_id"/>
+                                        <field name="company_currency_amount"/>
+                                        <field name="company_currency_id"/>
+                                        <field name="payment_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="المسافرين المرافقين">
+                                <field name="accompanied_ids" >
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="passport_number"/>
+                                        <field name="phone"/>
                                     </tree>
                                 </field>
                             </page>
@@ -72,8 +86,7 @@
                 <tree>
                     <field name="name"/>
                     <field name="customers_count"/>
-                    <field name="total_amount" />
-                    <field name="dep_travel_place_id"/>
+                    <field name="airport_id"/>
                     <field name="des_travel_place_id" />
                     <field name="travel_go_date" />
                     <field name="travel_return_date" />
@@ -88,7 +101,6 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
-                    <field name="offer_id"/>
                     <field name="des_travel_place_id"/>
                     <group expand="0" colspan="4">
                         <filter  string="الوجهة" domain="[]" context="{'group_by':'des_travel_place_id'}"/>

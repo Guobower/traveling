@@ -11,48 +11,43 @@ class Travel(models.Model):
 
     state = fields.Selection([('draft', u'مسودة'),
                               ('confirmed', u'رحلة مؤكدة'),
-                              ('time_fixed', u'حدد موعد الرحلة'),
-                              ('started', u'بدأت الرحلة'),
-                              ('ended', u'إنتهت الرحلة'),
+                              ('closed', u'رحلة مدفوعة'),
                               ('canceled', u'رحلة ملغات'),
                               ], default='draft',
                              track_visibility='onchange',
                              index=True, readonly=True)
 
-    name = fields.Char(string=u'رقم العرض',
+    name = fields.Char(string=u'رقم الرحلة',
                        required=True,
                        copy=False,
                        readonly=True,
                        index=True,
                        default=lambda self: _('New'))
 
-    company_id = fields.Many2one('res.company', u'الشركة')
+    partner_id = fields.Many2one(comodel_name='res.partner',
+                                 string=u'العميل',
+                                 required=True)
 
-    offer_id = fields.Many2one('travel.offer', u'عرض الرحلة',
-                               readonly=True,
-                               states={'draft': [('readonly', False)]})
+    company_id = fields.Many2one(comodel_name='res.company',
+                                 string=u'الشركة')
 
-    dep_travel_place_id = fields.Many2one('travel.travel.place', u'الإنطلاق',
+    airport_id = fields.Many2one(comodel_name='travel.airport',
+                                 string=u'محطة الإنطلاق',
+                                 required=True,
+                                 readonly=True,
+                                 states={'draft': [('readonly', False)]}
+                                 )
+
+    des_travel_place_id = fields.Many2one(comodel_name='travel.travel.place',
+                                          string=u'الوجهة',
                                           required=True,
                                           readonly=True,
                                           states={'draft': [('readonly', False)]}
                                           )
-
-    des_travel_place_id = fields.Many2one('travel.travel.place', u'الوجهة',
-                                          required=True,
-                                          readonly=True,
-                                          states={'draft': [('readonly', False)]}
-                                          )
-    price = fields.Float(u'مبلغ المسافر الواحد', required=True,readonly=True, states={'draft': [('readonly', False)]})
-
-    total_amount = fields.Float(u'المجموع',
-                                compute='get_total',
-                                readonly=True,
-                                store=True)
+    price = fields.Float(u'المبلغ المستحق', required=True)
 
     paid_amount = fields.Float(string=u'المبلغ المدفوع',
-                               compute='get_total_paid',
-                               readonly=True,
+                               compute='_get_total_payment',
                                store=True)
 
     customers_count = fields.Integer(string=u'عدد المسافرين',
@@ -60,57 +55,35 @@ class Travel(models.Model):
                                      compute='count_customers',
                                      store=True)
 
-    currency_id = fields.Many2one('res.currency', string='Currency', required=True,
+    currency_id = fields.Many2one('res.currency', string=u'عملة الشركة', required=True,
                                   default=lambda self: self.env.user.company_id.currency_id,
-                                  readonly=True,
-                                  states={'draft': [('readonly', False)]}
-                                  )
-    travel_type = fields.Many2one('travel.travel.type', u'نوع الرحلة', required=True,
-                                  readonly=True,
-                                  states={'draft': [('readonly', False)]}
-                                  )
-    travel_way = fields.Many2one('travel.travel.way', u'وسيلة السفر')
+                                  readonly=True)
+
+    travel_type = fields.Many2one('travel.travel.type', u'نوع الرحلة', required=True)
+
+    travel_way = fields.Many2one(comodel_name='travel.travel.way',
+                                 string=u'وسيلة السفر',
+                                 required=1,
+                                 states={'draft': [('readonly', False)]})
 
     travel_company_id = fields.Many2one(comodel_name='travel.travel.company',
                                         string=u'شركة الرحلة',
                                         required=True,
                                         )
 
-    travel_go_date = fields.Date(u'ساعة الإنطلاق',readonly=True, states={'confirmed': [('readonly', False)]})
+    travel_go_date = fields.Date(string=u'ساعة الإنطلاق')
 
-    travel_return_date = fields.Date(u'ساعة الرجوع', readonly=True, states={'confirmed': [('readonly', False)]})
+    travel_return_date = fields.Date(string=u'ساعة الرجوع')
 
-    passenger_ids = fields.One2many(comodel_name='travel.passenger',
-                                    inverse_name='travel_id',
-                                    string='Passenger List',
-                                    )
+    accompanied_ids = fields.Many2many(comodel_name='res.partner',
+                                     relation='travel_partners_rel',
+                                     string=u'المسافرين المرافقين',
+                                     )
+    payment_ids = fields.One2many(comodel_name='travel.payment',
+                                  inverse_name='travel_id',
+                                  string='الدفعات',
+                                  domain=[('active', '=', True)])
 
-    @api.onchange('offer_id')
-    def onchange_offer_id(self):
-        """ set default value for fields that exist in offer"""
-        if self.offer_id:
-            if self.offer_id.state == 'canceled':
-                self.offer_id = False
-                return {'warning': {'title': _('خطأ'), 'message': _(u'لا يمكنك إختيار عرض ملغى')}}
-            if self.offer_id.state == 'expired':
-                self.offer_id = False
-                return {'warning': {'title': _('خطأ'), 'message': _(u'لا يمكنك إختيار عرض منتهي')}}
-            if self.offer_id.state not in 'confirmed':
-                self.offer_id = False
-                return {'warning': {'title': _('خطأ'), 'message': _(u'لا يمكنك إختيار عرض غير مؤكد')}}
-            if self.offer_id and self.offer_id.end_date > fields.Date.context_today(self):
-                self.offer_id = False
-                return {'warning': {'title': _('خطأ'), 'message': _(u'تاريخ نهاية العرض  %s أقل من تاريخ اليوم لا يمكنك إختيار هذا العرض') % self.offer_id.end_date}}
-            self.des_travel_place_id = self.offer_id.des_travel_place_id
-            self.currency_id = self.offer_id.currency_id
-            if self.offer_id.travel_company_id:
-                self.travel_company_id = self.offer_id.travel_company_id
-            if self.offer_id.travel_way:
-                self.travel_way = self.offer_id.travel_way
-            if self.offer_id.travel_type:
-                self.travel_type = self.offer_id.travel_type
-            if self.offer_id.price:
-                self.price = self.offer_id.price
 
     @api.multi
     def confirm_travel(self):
@@ -126,35 +99,28 @@ class Travel(models.Model):
 
         })
 
-    @api.depends('passenger_ids', 'price')
+    @api.depends('partner_id', 'accompanied_ids')
     def count_customers(self):
         """ count number of costumers."""
         for rec in self:
             rec.update({
-                'customers_count': rec.passenger_ids and len(rec.passenger_ids) or 0,
+                'customers_count': (rec.partner_id and 1 or 0) + (rec.accompanied_ids and len(rec.accompanied_ids) or 0),
             })
 
-    @api.depends('passenger_ids', 'passenger_ids.amount')
-    def get_total(self):
-        """ compute amount paid of total passengers."""
-        for rec in self:
-            if rec.passenger_ids:
-                rec.total_amount = sum(passenger.amount for passenger in rec.passenger_ids )
-            else:
-                rec.total_amount = 0.0
-
-    @api.depends('passenger_ids', 'passenger_ids.amount_paid')
-    def get_total_paid(self):
-        """ compute amount paid of total passengers."""
-        for rec in self:
-            if rec.passenger_ids:
-                rec.paid_amount = sum(passenger.amount_paid for passenger in rec.passenger_ids )
-            else:
-                rec.paid_amount = 0.0
-
-    @api.constrains('passenger_ids')
+    @api.constrains('accompanied_ids')
     def prevent_duplication(self):
         """ you cannot affect the some client two time"""
         for rec in self:
-            if rec.passenger_ids and len(rec.passenger_ids) > len(rec.passenger_ids.mapped('passenger_id')):
+            if rec.accompanied_ids and len(rec.accompanied_ids) > len(rec.accompanied_ids.mapped('id'))\
+                    or rec.partner_id.id in rec.accompanied_ids.ids:
                 raise exceptions.ValidationError(u'!!لا يمكنك إعادة إدراج نفس الزبون مرتين')
+
+
+    @api.depends('payment_ids', 'payment_ids.company_currency_amount')
+    def _get_total_payment(self):
+        """ compute the amount paid by the client"""
+        for rec in self:
+            total_paid = 0.0
+            for payment in rec.payment_ids:
+                total_paid += payment.company_currency_amount
+            rec.paid_amount = total_paid
