@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <template id="recu_payment_template">
+            <t t-call="report.external_layout">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-xs-7">
+                                <div>
+                                    <img class="barcode" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=0' % ('Code128', doc.bar_code or 2018, 450, 80)"/>
+                                </div>
+                            </div>
+                            <div class="col-xs-5" style="margin-bottom:1cm;">
+                                <h2>Client</h2>
+                                <div style="margin-left: 20px;">
+                                    <h2>
+                                        <span class="spacing" t-esc="doc.partner_id.name"/>
+                                    </h2>
+                                    <div t-field="doc.partner_id"
+                                         t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
+                                    <p>
+                                        <strong>N°P:</strong>
+                                        <span t-esc="doc.partner_id.passport_number"/>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+                        <h1 class="text-center" style="margin-bottom: 2cm"> <strong>RECU DE PAIEMENT</strong></h1>
+                        <h3>
+                            <strong>Voyage N°:</strong>
+                            <span t-esc="doc.name"/>
+                        </h3>
+                        <p>
+                            <strong>Type de voyage:</strong>
+                            <span t-esc="doc.travel_type.name" />
+                        </p>
+                        <p>
+                            <strong>Point de départ</strong>
+                            <span t-esc="doc.airport_id.name"/>
+                            <span style="padding-left: 5cm"/>
+                            <strong>Destination :</strong>
+                            <span t-esc="doc.des_travel_place_id.place_name" />, <span t-esc="doc.des_travel_place_id.country_id.name" />
+                        </p>
+                        <p>
+                            <strong>Date de départ:</strong>
+                            <span t-field="doc.travel_go_date" t-field-options='{"format": "yyyy/MM/dd"}'/>
+                            <span style="padding-left: 5cm"/>
+                            <strong>Date de Retour:</strong>
+                            <span t-field="doc.travel_return_date" t-field-options='{"format": "yyyy/MM/dd"}'/>
+                        </p>
+                        <div t-if="doc.accompanied_ids">
+                            <p><strong>Voyageurs supplémentaires:</strong></p>
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-cneter">Nom de client</th>
+                                        <th class="text-cneter">N° de passeport </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-foreach="doc.accompanied_ids" t-as="passenger">
+                                        <tr>
+                                            <td> <span t-esc="passenger.name"/></td>
+                                            <td> <span t-esc="passenger.passport_number"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 pull-right">
+                                <p>
+                                    <strong>Montant en Chiffre:</strong>
+                                    <span t-field="doc.price"
+                                          t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                    <br/>
+                                    <strong>Montant payé:</strong>
+                                    <span t-field="doc.paid_amount"
+                                          t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                    <br/>
+                                    <strong>Le reste:</strong>
+                                    <span t-field="doc.amount_left"
+                                          t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div>
+                                <p style="clear:both">
+                                    <br/><br/>
+                                    <strong>Montant en Lettre:</strong>
+                                    <span t-esc="doc.price_to_text"/>
+                                </p>
+                            </div>
+                            <div class="col-xs-5 col-xs-offset-7" style="margin-top:5cm">
+                                <p><strong>Cachet et signature : </strong><small class="spacing" t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')"/></p>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </t>
+
+            </t>
+        </template>
+
+        <report
+                id="recu_payment_report"
+                string="Reçu de paiement"
+                model="travel.travel"
+                report_type="qweb-pdf"
+                file="traveling.recu_payment_template"
+                name="traveling.recu_payment_template"
+        />
+    </data>
+</openerp>
